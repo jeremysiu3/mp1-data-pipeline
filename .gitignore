@@ -13,5 +13,6 @@ venv/
 # OS
 .DS_Store
 
-
+# Output
+output/
 

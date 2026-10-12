@@ -7,18 +7,20 @@ def remove_duplicates(df):
     """Remove duplicate rows."""
     before = len(df)
     df = df.drop_duplicates()
-    logger.debug(f"Removed {before - len(df)} duplicate rows")
+    logger.debug(f"remove_duplicates: {before} -> {len(df)} rows")
     return df
 
 
 def handle_missing(df, axis="rows"):
     """Drop rows or columns containing missing values."""
     if axis == "rows":
-        logger.debug(f"Removed {len(df) - len(df.dropna())} rows with missing values")
-        return df.dropna()
+        cleaned = df.dropna()
+        logger.debug(f"handle_missing: {len(df)} -> {len(cleaned)} rows")
+        return cleaned
     elif axis == "columns":
-        logger.debug(f"Removed {len(df.columns) - len(df.dropna(axis=1))} columns with missing values")
-        return df.dropna(axis=1)
+        cleaned = df.dropna(axis=1)
+        logger.debug(f"handle_missing: {len(df.columns)} -> {len(cleaned.columns)} columns")
+        return cleaned
     else:
         logger.error("Error: Invalid axis value. Must be 'rows' or 'columns'.")
         raise ValueError("Invalid axis value. Must be 'rows' or 'columns'.")
@@ -45,7 +47,7 @@ def remove_outliers(df, columns, method, threshold):
             lower = q1 - threshold * iqr
             upper = q3 + threshold * iqr
             df = df[(df[col] >= lower) & (df[col] <= upper)]
-            logger.debug(f"{col}: method={method}, threshold={threshold}, lower={lower}, upper={upper}, removed={before - len(df)}")
+            logger.debug(f"{col}: method={method}, threshold={threshold}, removed={before - len(df)}")
         elif method == "zscore":
             mean = df[col].mean()
             std = df[col].std()
